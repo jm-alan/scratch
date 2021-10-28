@@ -1,6 +1,8 @@
 const OUTDOOR_TEMPERATURE = +process.argv[2];
 
 class IceCreamError extends Error {
+  isVerySad: boolean;
+
   constructor(message: string) {
     super(message);
     this.isVerySad = true;
@@ -8,14 +10,22 @@ class IceCreamError extends Error {
 }
 
 class Scoop {
-  constructor(flavor) {
+  flavor: string;
+  nextScoop: Scoop;
+
+  constructor(flavor: string) {
     this.flavor = flavor;
     this.nextScoop = null;
   }
 }
 
 class IceCream {
-  constructor(formFactor = 'cone', scoopsPaidFor = 1) {
+  formFactor: string;
+  scoopsPaidFor: number;
+  private scoops: number;
+  topScoop: Scoop;
+
+  constructor(formFactor: string = 'cone', scoopsPaidFor: number = 1) {
     this.formFactor = formFactor;
     this.scoopsPaidFor = scoopsPaidFor;
     this.scoops = 0;
@@ -34,38 +44,48 @@ class IceCream {
 
   }
 
-  get amount() {
+  get amount(): number {
     return this.amount;
   }
 
-  addScoop(scoop) {
+  addScoop(scoop: Scoop): void {
     if (this.scoops < this.scoopsPaidFor) {
       console.log('Added another delicious scoop of', scoop.flavor);
       scoop.nextScoop = this.topScoop;
       this.topScoop = scoop;
       this.scoops++;
-    } else throw new IceCreamError('TOO MANY SCOOPS >:(');
+    } else throw new IceCreamError('YOU HAVEN\'T PAID FOR THAT MANY SCOOPS >:(');
   }
 
-  removeTopScoop() {
+  removeTopScoop(): Scoop {
     if (this.scoops) {
       this.scoops--;
-      const staging = this.topScoop;
+      const staging: Scoop = this.topScoop;
       this.topScoop = staging.nextScoop;
       staging.nextScoop = null;
       return staging;
     } else throw new IceCreamError('NO SCOOPS LEFT :\'(');
   }
 
-  eatScoop() {
+  eatScoop(): Scoop {
     return this.removeTopScoop();
   }
 
-  melt() {
+  melt(): void {
     this.removeTopScoop();
     console.log('OH NO I\'M MELTING :\'(');
   }
 }
 
+const flavors: string[] = [
+  'vanilla',
+  'chocolate',
+  'strawberry',
+  'dulce de leche',
+  'cookie dough',
+  'rocky road',
+  'mint chip'
+];
+
 const iceCream = new IceCream('cup', 5);
-setInterval(() => iceCream.addScoop(new Scoop('vanilla')), 1000);
+setInterval(() => iceCream.addScoop(new Scoop(flavors[Math.floor(Math.random() * 6)])), 1000);
