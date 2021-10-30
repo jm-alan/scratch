@@ -25,7 +25,6 @@ const countSort = (arr) => {
   for (let i = 0; i < arr.length; i++) arr[i] = output[i];
 };
 
-const someArr = new Array(100);
-for (let i = 0; i < 100; i++) someArr[i] = Math.floor(Math.random() * 1000);
+const someArr = [453, 153, 854, 587, 324, 42, 394, 4, 969, 357];
 countSort(someArr);
 console.log(someArr);
