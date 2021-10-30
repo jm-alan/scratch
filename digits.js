@@ -5,4 +5,4 @@ const getNthDigitFromEnd = (num, distanceFromEnd) => {
   return getNthDigitFromEnd(num, distanceFromEnd - 1);
 };
 const someNum = 8293759287345;
-console.log(getNthDigitFromEnd(someNum, 0));
+console.log(getNthDigitFromEnd(someNum, 20));
