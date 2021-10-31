@@ -1,4 +1,4 @@
-import util from 'util';
+const util = require('util');
 
 class Node {
   constructor (val) {
@@ -15,17 +15,12 @@ class List {
     this.length = 0;
     this.head = undefined;
     this.tail = undefined;
+    this.center = undefined;
   }
 
   pushNode (node) {
     this.tail && (this.tail.append(node) || (this.tail = this.tail.next));
     this.tail || ((this.tail = node) && (this.head = this.tail));
-    ++this.length;
-  }
-
-  pushVal (val) {
-    this.tail && (this.tail.append(new Node(val)) || (this.tail = this.tail.next));
-    this.tail || ((this.tail = new Node(val)) && (this.head = this.tail));
     ++this.length;
   }
 
@@ -58,8 +53,7 @@ class List {
     current && (current = current.next);
     const right = new List();
     right.head = current;
-    while (++currPos <= rightLength) current = current.next;
-    right.tail = current;
+    right.tail = this.tail;
     right.length = rightLength;
     this.head = undefined;
     this.tail = undefined;
@@ -69,7 +63,7 @@ class List {
     List.merge(left, right, this);
   }
 
-  static merge (list1, list2, list3 = new List()) {
+  static merge (list1, list2, list3) {
     while (list1.length && list2.length) {
       if (list1.head.val < list2.head.val) list3.pushNode(list1.shift());
       else list3.pushNode(list2.shift());
@@ -105,12 +99,12 @@ class List {
   }
 }
 
-const list = new List();
-let timer = global.performance.now();
-for (let i = 0; i < 10000000; i++) list.pushVal(Math.round(Math.random() * 10000000));
-console.log('Allocation complete, sorting.', timer = global.performance.now() - timer);
-list.sort();
-console.log('Sort complete, validating.', timer = global.performance.now() - timer);
-console.log('Validation complete', global.performance.now() - timer, List.isSorted(list));
+for (let i = 0; i < 100; i++) {
+  const list = new List();
+  for (let i = 0; i < 5000000; i++) list.pushNode(new Node(Math.round(Math.random() * 1000000000)));
+  const timer = global.performance.now();
+  list.sort();
+  console.log(global.performance.now() - timer);
+}
 
 // console.log(list1, list2, list3);
