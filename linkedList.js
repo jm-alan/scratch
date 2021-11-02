@@ -3,10 +3,7 @@ const util = require('util');
 class Node {
   constructor (val) {
     this.val = val;
-  }
-
-  append (node) {
-    this.next = node;
+    this.next = undefined;
   }
 }
 
@@ -15,26 +12,30 @@ class List {
     this.length = 0;
     this.head = undefined;
     this.tail = undefined;
-    this.center = undefined;
   }
 
   pushNode (node) {
-    this.tail && (this.tail.append(node) || (this.tail = this.tail.next));
-    this.tail || ((this.tail = node) && (this.head = this.tail));
-    ++this.length;
+    if (this.tail) {
+      this.tail.next = node;
+      this.tail = this.tail.next;
+    } else {
+      this.tail = node;
+      this.head = this.tail;
+    }
+    this.length++;
   }
 
-  shift () {
-    if (!this.head) return;
-    const staging = this.head;
-    this.head = this.head.next;
-    if (!this.head) this.tail = undefined;
-    staging.next = undefined;
-    if (--this.length === 1) {
+  decapitate (list) {
+    if (this.tail) {
+      this.tail.next = list.head;
+      this.tail = this.tail.next;
+    } else {
+      this.tail = list.head;
       this.head = this.tail;
-      this.tail.next = undefined;
     }
-    return staging;
+    list.head = list.head.next;
+    list.length--;
+    this.length++;
   }
 
   sort () {
@@ -49,7 +50,6 @@ class List {
     while (++currPos <= leftLength) current = current.next;
     left.tail = current;
     left.length = leftLength;
-    currPos = 1;
     current && (current = current.next);
     const right = new List();
     right.head = current;
@@ -65,12 +65,24 @@ class List {
 
   static merge (list1, list2, list3) {
     while (list1.length && list2.length) {
-      if (list1.head.val < list2.head.val) list3.pushNode(list1.shift());
-      else list3.pushNode(list2.shift());
+      if (list1.head.val < list2.head.val) list3.decapitate(list1);
+      else list3.decapitate(list2);
     }
-    while (list1.length && !list3.pushNode(list1.shift()));
-    while (list2.length && !list3.pushNode(list2.shift()));
-    return list3;
+    if (list1.length) {
+      list3.tail.next = list1.head;
+      list3.tail = list1.tail;
+      list3.length += list1.length;
+      list1.length = 0;
+      list1.head = undefined;
+      list1.tail = undefined;
+    } else if (list2.length) {
+      list3.tail.next = list2.head;
+      list3.tail = list2.tail;
+      list3.length += list2.length;
+      list2.length = 0;
+      list2.head = undefined;
+      list2.tail = undefined;
+    }
   }
 
   static isSorted (list) {
@@ -98,13 +110,22 @@ class List {
     };
   }
 }
-
-for (let i = 0; i < 100; i++) {
+const listTimes = [];
+const arrTimes = [];
+const runs = +process.argv[2];
+for (let i = 0; i < 50; i++) {
   const list = new List();
-  for (let i = 0; i < 5000000; i++) list.pushNode(new Node(Math.round(Math.random() * 1000000000)));
-  const timer = global.performance.now();
+  for (let j = 0; j < runs; j++) list.pushNode(new Node(Math.round(Math.random() * 1000000000)));
+  let timer = global.performance.now();
   list.sort();
-  console.log(global.performance.now() - timer);
+  listTimes.push(timer = global.performance.now() - timer);
+  console.log(`List time: ${timer} total, speed: ${runs / timer} ints/ms`);
 }
-
-// console.log(list1, list2, list3);
+for (let i = 0; i < 50; i++) {
+  const arr = new Array(runs);
+  for (let j = 0; j < runs; j++) arr[j] = Math.floor(Math.random * 1000000000);
+  let timer = global.performance.now();
+  arr.sort((a, b) => a - b);
+  arrTimes.push(timer = global.performance.now() - timer);
+  console.log(`Array time: ${timer} total, speed: ${runs / timer} ints/ms`);
+}
