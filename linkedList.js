@@ -1,11 +1,5 @@
 /* eslint-disable promise/param-names */
 
-const { Worker } = require('worker_threads');
-const { resolve } = require('path');
-
-const mutex = [];
-const makeSortWorker = workerData => new Promise(res => (new Worker(resolve(__dirname, 'listSortWorker.js'), { workerData })).on('message', res));
-
 class Node {
   constructor (val) {
     this.val = val;
