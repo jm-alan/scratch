@@ -63,6 +63,15 @@ global.mergeSort = list => {
   global.merge(left, right, list);
 };
 
+global.isSorted = list => {
+  let current = list.head;
+  while (current.next) {
+    if (current.val > current.next.val) return false;
+    current = current.next;
+  }
+  return true;
+};
+
 const globalTimer = global.performance.now();
 const timers = [];
 const speeds = [];
