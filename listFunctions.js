@@ -40,27 +40,35 @@ global.merge = (list1, list2, list3) => {
 };
 
 global.mergeSort = list => {
-  if (list.length < 2) return;
-  const half = list.length / 2;
-  const leftLength = global.Math.floor(half);
-  const left = {
-    length: 0,
-    head: undefined,
-    tail: undefined
-  };
-  const right = {
-    length: 0,
-    head: undefined,
-    tail: undefined
-  };
-  while (left.length < leftLength) global.decapitate(left, list);
-  right.head = list.head;
-  right.tail = list.tail;
-  right.length = global.Math.ceil(half);
-  list.length = 0;
-  global.mergeSort(left);
-  global.mergeSort(right);
-  global.merge(left, right, list);
+  if (list.length < 3) {
+    if (list.head && list.head.val > list.tail.val) {
+      list.tail.next = list.head.val;
+      list.head.val = list.tail.val;
+      list.tail.val = list.tail.next;
+      list.tail.next = undefined;
+    }
+  } else {
+    const half = list.length / 2;
+    const leftLength = global.Math.floor(half);
+    const left = {
+      length: 0,
+      head: undefined,
+      tail: undefined
+    };
+    const right = {
+      length: 0,
+      head: undefined,
+      tail: undefined
+    };
+    while (left.length < leftLength) global.decapitate(left, list);
+    right.head = list.head;
+    right.tail = list.tail;
+    right.length = global.Math.ceil(half);
+    list.length = 0;
+    global.mergeSort(left);
+    global.mergeSort(right);
+    global.merge(left, right, list);
+  }
 };
 
 global.isSorted = list => {
