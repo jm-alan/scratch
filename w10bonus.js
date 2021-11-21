@@ -3,8 +3,8 @@ const kth = (str, k) => {
   const uniqueChars = new Set();
   for (let i = 0; i < str.length; i++) {
     uniqueChars.add(str[i]);
-    if (counter[str[i]]) counter[str[i]]++;
-    else counter[str[i]] = 1;
+    counter[str[i]] ??= 0;
+    counter[str[i]]++;
   }
   const frequencies = [];
   uniqueChars.forEach((val) => (frequencies[counter[val]] = val));
