@@ -27,8 +27,8 @@ const sort = (left, length) => {
       left.val = left.val - left.next.val;
     }
   } else {
-    const leftLength = Math.ceil(length / 2);
-    const rightLength = length - leftLength;
+    const rightLength = length >> 1;
+    const leftLength = length - rightLength;
     let current = left;
     let currLength = 1;
     while (currLength++ < leftLength) current = current.next;
@@ -51,13 +51,7 @@ for (let i = 0; i < 100; i++) {
   };
   let current = list;
   let currLength = 1;
-  while (currLength++ < length) {
-    current.next = {
-      val: Math.round(Math.random() * 1000000000),
-      next: null
-    };
-    current = current.next;
-  }
+  while (currLength++ < length && (current.next = { val: Math.round(Math.random() * 1000000000), next: null }) && (current = current.next));
   const timer = global.performance.now();
   sort(list, length);
   const time = global.performance.now() - timer;
