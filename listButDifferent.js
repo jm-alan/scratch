@@ -28,38 +28,61 @@ const sort = (left, length) => {
     }
   } else {
     const rightLength = length >> 1;
-    const leftLength = length - rightLength;
+    length = length - rightLength;
     let current = left;
     let currLength = 1;
-    while (currLength++ < leftLength) current = current.next;
+    while (currLength++ < length) current = current.next;
     const right = current.next;
     current.next = null;
-    sort(left, leftLength);
+    sort(left, length);
     sort(right, rightLength);
     merge(left, right);
   }
 };
 
-const length = +process.argv[2];
+const inputLength = +process.argv[2];
+for (let length = 50000; length < inputLength; length += 50000) {
+  const listTimers = [];
+  const listSpeeds = [];
+  for (let i = 0; i < 1000; i++) {
+    const list = {
+      val: Math.round(Math.random() * 1000000000),
+      next: null
+    };
+    let current = list;
+    let currLength = 1;
+    while (currLength++ < length && (current.next = { val: Math.round(Math.random() * 1000000000), next: null }) && (current = current.next));
+    const timer = global.performance.now();
+    sort(list, length);
+    const time = global.performance.now() - timer;
+    const speed = length / time;
+    listTimers.push(time);
+    listSpeeds.push(speed);
+  }
 
-const timers = [];
-const speeds = [];
-for (let i = 0; i < 100; i++) {
-  const list = {
-    val: Math.round(Math.random() * 1000000000),
-    next: null
-  };
-  let current = list;
-  let currLength = 1;
-  while (currLength++ < length && (current.next = { val: Math.round(Math.random() * 1000000000), next: null }) && (current = current.next));
-  const timer = global.performance.now();
-  sort(list, length);
-  const time = global.performance.now() - timer;
-  const speed = length / time;
-  timers.push(time);
-  speeds.push(speed);
+  const arrTimers = [];
+  const arrSpeeds = [];
+  for (let i = 0; i < 1000; i++) {
+    const arr = [];
+    for (let i = 0; i < length; i++) arr.push(Math.round(Math.random() * 1000000000));
+    const timer = global.performance.now();
+    arr.sort((a, b) => a - b);
+    const time = global.performance.now() - timer;
+    const speed = length / time;
+    arrTimers.push(time);
+    arrSpeeds.push(speed);
+  }
+  console.log('Input length:', length);
+  console.log(
+    'List sort time:',
+    +(listTimers.reduce((acc, next) => acc + next) / 1000).toFixed(6),
+    'ints/ms:',
+    +(listSpeeds.reduce((acc, next) => acc + next) / 1000).toFixed(6)
+  );
+  console.log(
+    'Array sort time:',
+    +(arrTimers.reduce((acc, next) => acc + next) / 1000).toFixed(6),
+    'ints/ms:',
+    +(arrSpeeds.reduce((acc, next) => acc + next) / 1000).toFixed(6)
+  );
 }
-console.log(
-  timers.reduce((acc, next) => acc + next) / 100,
-  speeds.reduce((acc, next) => acc + next) / 100
-);
