@@ -1,7 +1,6 @@
 const merge = (left, right) => {
   let nodeStagingLeft = left;
   let nodeStagingRight = right;
-  let valStaging = 0;
   while (left && right) {
     if (!(left.val < right.val)) {
       left.val = left.val + right.val;
@@ -41,7 +40,7 @@ const sort = (left, length) => {
 };
 
 const inputLength = +process.argv[2];
-for (let length = 50000; length < inputLength; length += 50000) {
+for (let length = 100000; length < inputLength; length += 100000) {
   const listTimers = [];
   const listSpeeds = [];
   for (let i = 0; i < 1000; i++) {
@@ -74,15 +73,17 @@ for (let length = 50000; length < inputLength; length += 50000) {
   }
   console.log('Input length:', length);
   console.log(
-    'List sort time:',
+    'List sort avg:',
     +(listTimers.reduce((acc, next) => acc + next) / 1000).toFixed(6),
-    'ints/ms:',
-    +(listSpeeds.reduce((acc, next) => acc + next) / 1000).toFixed(6)
+    'ms,',
+    +(listSpeeds.reduce((acc, next) => acc + next) / 1000).toFixed(6),
+    'ints/ms'
   );
   console.log(
-    'Array sort time:',
+    'Array sort avg:',
     +(arrTimers.reduce((acc, next) => acc + next) / 1000).toFixed(6),
-    'ints/ms:',
-    +(arrSpeeds.reduce((acc, next) => acc + next) / 1000).toFixed(6)
+    'ms,',
+    +(arrSpeeds.reduce((acc, next) => acc + next) / 1000).toFixed(6),
+    'ints/ms'
   );
 }
