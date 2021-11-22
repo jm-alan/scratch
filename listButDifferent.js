@@ -1,6 +1,6 @@
 const merge = (left, right) => {
-  let nodeStagingLeft = left.next;
-  let nodeStagingRight = right.next;
+  let nodeStagingLeft = left;
+  let nodeStagingRight = right;
   let valStaging = 0;
   while (left && right) {
     if (!(left.val < right.val)) {
@@ -20,34 +20,35 @@ const merge = (left, right) => {
 };
 
 const sort = (left, length) => {
-  if (length < 2) return;
-
-  const leftLength = Math.ceil(length / 2);
-  const rightLength = length - leftLength;
-  let current = left;
-  let currLength = 1;
-  while (currLength++ < leftLength) current = current.next;
-  const right = current.next;
-  current.next = null;
-  sort(left, leftLength);
-  sort(right, rightLength);
-  merge(left, right);
-};
-
-const isSorted = list => {
-  let counter = 0;
-  while (list.next && list.val <= list.next.val && (list = list.next) && ++counter);
-  return [!list.next, counter];
+  if (length < 3) {
+    if (left.next && left.val > left.next.val) {
+      left.val = left.val + left.next.val;
+      left.next.val = left.val - left.next.val;
+      left.val = left.val - left.next.val;
+    }
+  } else {
+    const leftLength = Math.ceil(length / 2);
+    const rightLength = length - leftLength;
+    let current = left;
+    let currLength = 1;
+    while (currLength++ < leftLength) current = current.next;
+    const right = current.next;
+    current.next = null;
+    sort(left, leftLength);
+    sort(right, rightLength);
+    merge(left, right);
+  }
 };
 
 const length = +process.argv[2];
 
-const list = {
-  val: Math.round(Math.random() * 1000000000),
-  next: null
-};
 const timers = [];
-for (let i = 0; i < 50; i++) {
+const speeds = [];
+for (let i = 0; i < 100; i++) {
+  const list = {
+    val: Math.round(Math.random() * 1000000000),
+    next: null
+  };
   let current = list;
   let currLength = 1;
   while (currLength++ < length) {
@@ -57,17 +58,14 @@ for (let i = 0; i < 50; i++) {
     };
     current = current.next;
   }
-
   const timer = global.performance.now();
   sort(list, length);
-  const fin = global.performance.now() - timer;
-  console.log(fin);
-  timers.push(fin);
-  // current = list;
-  // while (current) {
-  //   console.log(current);
-  //   current = current.next;
-  // }
-  console.log(isSorted(list));
+  const time = global.performance.now() - timer;
+  const speed = length / time;
+  timers.push(time);
+  speeds.push(speed);
 }
-console.log(timers.reduce((acc, next) => acc + next) / 50);
+console.log(
+  timers.reduce((acc, next) => acc + next) / 100,
+  speeds.reduce((acc, next) => acc + next) / 100
+);
