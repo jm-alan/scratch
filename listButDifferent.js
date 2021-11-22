@@ -4,9 +4,9 @@ const merge = (left, right) => {
   let valStaging = 0;
   while (left && right) {
     if (!(left.val < right.val)) {
-      valStaging = left.val;
-      left.val = right.val;
-      right.val = valStaging;
+      left.val = left.val + right.val;
+      right.val = left.val - right.val;
+      left.val = left.val - right.val;
       nodeStagingLeft = left.next;
       nodeStagingRight = right.next;
       left.next = right;
